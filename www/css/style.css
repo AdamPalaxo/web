@@ -1,0 +1,19 @@
+.view {
+    color: green;
+}
+
+.edit {
+    color: orange;
+}
+
+.remove {
+    color: red;
+}
+
+.required label {
+    color: maroon
+}
+
+.chosen {
+    background-color: #c5f0ba !important;
+}

@@ -1,0 +1,39 @@
+{block content}
+
+
+    <div class="container text-center">
+        <div class="jumbotron">
+            <h1>Přehled projektu</strong></h1>
+        </div>
+    </div>
+
+<div class="container text-center" id="articles">
+
+    {if isset($project)}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <tr class="success">
+                <th class="text-center">Název</th>
+                <th class="text-center">Datum odevzdání</th>
+                <th class="text-center">Typ projektu</th>
+                <th class="text-center">Webový projekt</th>
+            </tr>
+            <tbody>
+                <tr>
+                    <td>{$project->title}</td>
+                    <td>{$project->deadline|date:'d.m.Y'}</td>
+                    <td>{\App\Enum\ProjectTypes::$states[$project->type]}</td>
+                    <td>{\App\Enum\WebProject::$states[$project->web_project]}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {/if}
+
+    <div class="text-center">
+        <a n:href=Homepage:default class="btn btn-success btn-lg">Zpět na seznam</a>
+    </div>
+
+</div>
+
+{/block}

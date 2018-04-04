@@ -1,0 +1,71 @@
+{block content}
+
+    <section id="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="active"> Seznam projektů</li>
+            </ol>
+        </div>
+    </section>
+
+    <div class="container text-center" id="projects">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+            <tr class="success">
+                {var $args = [page => $paginator->page, sort => $sort !== 'asc' ? 'asc' : 'desc']}
+                <th class="text-center {if $order === id} chosen {/if}">ID<a n:href="default order => id (expand) $args"><i class="fa fa-fw fa-sort"></i></a><br></th>
+                <th class="text-center {if $order === title} chosen {/if}">Název<a n:href="default order => title (expand) $args"><i class="fa fa-fw fa-sort"></i></a><br></th>
+                <th class="text-center {if $order === deadline} chosen {/if}">Datum odevzdání<a n:href="default order => deadline (expand) $args"><i class="fa fa-fw fa-sort"></i></a><br></th>
+                <th class="text-center {if $order === type} chosen {/if}">Typ projektu<a n:href="default order => type (expand) $args"><i class="fa fa-fw fa-sort"></i></a><br></th>
+                <th class="text-center {if $order === web_project} chosen {/if}">Webový projekt<a n:href="default order => web_project (expand) $args"><i class="fa fa-fw fa-sort"></i></a><br></th>
+                <th class="text-center">Editace<br></th>
+            </tr>
+            <tbody>
+                {if count($projects) > 0}
+                    <tr n:foreach="$projects as $project">
+                        <td>{$project->id}</td>
+                        <td>{$project->title}</td>
+                        <td>{$project->deadline|date:'d.m.Y'}</td>
+                        <td>{\App\Enum\ProjectTypes::$states[$project->type]}</td>
+                        <td>{\App\Enum\WebProject::$states[$project->web_project]}</td>
+                        <td class="text-center">
+                            <span><a class="view" n:href="Project:show $project->id"><span class="glyphicon glyphicon-eye-open"></span></a></span>
+                            <span><a class="edit" n:href="Project:edit $project->id"><span class="glyphicon glyphicon-pencil"></span></a></span>
+                            <span><a class="remove" n:href="Project:remove $project->id"><span class="glyphicon glyphicon-trash"></span></a></span>
+                        </td>
+                    </tr>
+                {else}
+                    <tr><td colspan="6"><strong>Žádné záznamy k dispozici.</strong></td></tr>
+                {/if}
+            </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            {if !$paginator->isFirst()}
+                <a n:href="default page => 1">První</a>
+                &nbsp;|&nbsp;
+                <a n:href="default page => $paginator->page-1">Předchozí</a>
+                &nbsp;|&nbsp;
+            {/if}
+
+            Stránka <strong>{$paginator->page}</strong> z <strong>{$paginator->pageCount}</strong>
+
+            {if !$paginator->isLast()}
+                &nbsp;|&nbsp;
+                <a n:href="default page => $paginator->page+1">Další</a>
+                &nbsp;|&nbsp;
+                <a n:href="default page => $paginator->pageCount">Poslední</a>
+            {/if}
+
+        </div>
+
+        <div class="text-center">
+            <a n:href=Project:add class="btn btn-success btn-lg">Přidání nového projektu</a>
+        </div>
+
+    </div>
+{/block}
+
+
+
