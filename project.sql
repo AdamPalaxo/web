@@ -16,8 +16,8 @@ CREATE TABLE `project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `project` (`id`, `title`, `deadline`, `type`, `web_project`) VALUES
-(4,	'PrvnĂ­ projekt',	'2018-04-20',	'time',	CONV('1', 2, 10) + 0),
-(5,	'NovĂ˝ projekt',	'2018-04-02',	'time',	CONV('1', 2, 10) + 0),
+(4,	'První projekt',	'2018-04-20',	'time',	CONV('1', 2, 10) + 0),
+(5,	'Nový projekt',	'2018-04-02',	'time',	CONV('1', 2, 10) + 0),
 (6,	'Test',	'2018-04-02',	'time',	CONV('1', 2, 10) + 0),
 (8,	'Test',	'2018-04-02',	'time',	CONV('1', 2, 10) + 0),
 (9,	'Test',	'2018-04-02',	'time',	CONV('0', 2, 10) + 0),
