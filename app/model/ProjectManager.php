@@ -32,7 +32,7 @@ class ProjectManager extends BaseManager
 
     public function getProjectsCount()
     {
-        return $this->database->fetchField('SELECT COUNT(*) FROM ' . self::TABLE_NAME);
+        return $this->database->table(self::TABLE_NAME)->count();
     }
 
     public function saveProject($project)
