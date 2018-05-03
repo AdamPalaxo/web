@@ -7,7 +7,10 @@ use Nette\Utils\Paginator;
 
 use Nette;
 
-
+/**
+ * Třída HomepagePresenter se
+ * statrá o vykreslení projektů.
+ */
 class HomepagePresenter extends Nette\Application\UI\Presenter
 {
     /**
@@ -31,12 +34,23 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
         $this->projectManager = $projectManager;
     }
 
+    /**
+     * Změna sloupce a směru řazení.
+     *
+     * @param string $order sloupec podle kterého se řadí
+     * @param string $sort směr řazení
+     */
     public function actionDefault($order, $sort = 'asc')
     {
         $this->order = (string)$order;
         $this->sort = $sort === 'desc' ? 'desc' : 'asc';
     }
 
+    /**
+     * Renderování projektů.
+     *
+     * @param int $page pozžadovaná stránka s projekty
+     */
     public function renderDefault($page = 1)
     {
         $this->template->order = $this->order;
@@ -49,36 +63,9 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
         $paginator->setItemsPerPage(10);
         $paginator->setPage($page);
 
-        $projects = $this->projectManager->findProjects($paginator->getLength(), $paginator->getOffset());
-        $projects = $this->sortData($projects);
+        $projects = $this->projectManager->findProjects($paginator->getLength(), $paginator->getOffset(), $this->order, $this->sort);
 
         $this->template->projects = $projects;
         $this->template->paginator = $paginator;
-    }
-
-    /**
-     * Seřazení dat v tabulce
-     *
-     * @param $projects array řazené projekty
-     * @return mixed seřazené projekty
-     */
-    private function sortData($projects)
-    {
-        foreach ($projects as $key => $row)
-        {
-            $data[$key] = $row[$this->order];
-        }
-
-        if ($this->sort !== 'asc')
-        {
-            array_multisort($data, SORT_DESC, $projects);
-
-        }
-        else
-        {
-            array_multisort($data, SORT_ASC, $projects);
-        }
-
-        return $projects;
     }
 }

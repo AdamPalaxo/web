@@ -2,13 +2,22 @@
 
 namespace App\Presenters;
 
+use App\Components\ProjectControl;
+use App\Components\IProjectFormFactory;
 use App\Model\ProjectManager;
-use App\Bs3FormRenderer;
 
-use Nette\Application\UI\Form;
-
+/**
+ * Třída ProjectPresenter
+ * se stará o zobrazení,
+ * editaci a mazání projektů
+ * pomocí formu.
+ */
 class ProjectPresenter extends BasePresenter
 {
+
+    /** @var IProjectFormFactory @inject */
+    public $projectFormFactory;
+
     /** @var ProjectManager */
     protected $projectManager;
 
@@ -18,13 +27,19 @@ class ProjectPresenter extends BasePresenter
         $this->projectManager = $projectManager;
     }
 
+    /**
+     * Editace projektu.
+     *
+     * @param $projectId int id projektu
+     */
     public function actionEdit($projectId)
     {
         if ($project = $this->projectManager->getProject($projectId))
         {
             $values = $project->toArray();
-            $values['deadline'] = strftime("%Y-%m-%d", strtotime($values['deadline']));
-            $this['projectForm']->setDefaults($values);
+            $values['deadline'] = strftime("%d.%m.%Y", strtotime($values['deadline']));
+
+            $this['projectForm']['projectForm']->setDefaults($values);
         }
         else
         {
@@ -32,20 +47,36 @@ class ProjectPresenter extends BasePresenter
         }
     }
 
+    /**
+     * Smazání projektu.
+     *
+     * @param $projectId int id projektu
+     */
     public function actionRemove($projectId)
     {
-        $this->projectManager->removeProject($projectId);
-        $this->flashMessage('Článek byl úspěšně odstraněn.', 'success');
+        if ($this->projectManager->removeProject($projectId))
+        {
+            $this->flashMessage('Projekt úspěšně smazán.', 'success');
+        }
+        else
+        {
+            $this->flashMessage('Projekt se nepodařilo smazat.', 'danger');
+        }
         $this->redirect('Homepage:default');
     }
 
+    /**
+     * Zobrazení projektu.
+     *
+     * @param $projectId int id projektu
+     */
     public function actionShow($projectId)
     {
         if ($project = $this->projectManager->getProject($projectId))
         {
             $values = $project->toArray();
-            $values['deadline'] = strftime("%Y-%m-%d", strtotime($values['deadline']));
-            $this['projectForm']->setDefaults($values);
+            $values['deadline'] = strftime("%d.%m.%Y", strtotime($values['deadline']));
+            $this['projectForm']['projectForm']->setDefaults($values);
             $this->template->project = $project;
         }
         else
@@ -54,37 +85,30 @@ class ProjectPresenter extends BasePresenter
         }
     }
 
+    /**
+     * Vytvoření formu pro
+     * vytvoření a editaci formu.
+     *
+     * @return ProjectControl form
+     */
     protected function createComponentProjectForm()
     {
-        $options = [
-            'time' => 'časově omezený projekt',
-            'continuous' => 'Continuous Integration',
-        ];
-
-        $form = new Form;
-        $form->setRenderer(new Bs3FormRenderer());
-        $form->addHidden('id');
-        $form->addText('title', 'Název:')
-            ->setRequired('Název je povinný údaj!');
-        $form->addText('deadline', 'Vytvořen:')
-            ->setRequired('Datum odevzdání je povinný údaj!')
-            ->setType('date');
-        $form->addSelect('type','Typ:', $options)
-            ->setRequired('Typ projektu je povinný údaj');
-        $form->addCheckbox('web_project', ' webový projekt');
-        $form->addSubmit('send', 'Uložit projekt');
-        $form->onSuccess[] = [$this, 'projectFormSucceeded'];
+        $form = $this->projectFormFactory->create();
+        $form->onProjectSave[] = function (ProjectControl $form, $values)
+        {
+            if ($this->projectManager->saveProject($values))
+            {
+                $this->flashMessage('Projekt úspěšně uložen.', 'success');
+            }
+            else
+            {
+                $this->flashMessage('Projekt se nepodařilo uložit.', 'danger');
+            }
+            $this->redirect(':Homepage:default');
+        };
 
         return $form;
     }
-
-    public function projectFormSucceeded($form, $values)
-    {
-        $this->projectManager->saveProject($values);
-        $this->flashMessage('Projekt úspěšně uložen.', 'success');
-        $this->redirect(':Homepage:default');
-    }
-
 
 
 
