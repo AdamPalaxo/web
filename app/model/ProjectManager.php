@@ -63,7 +63,7 @@ class ProjectManager extends BaseManager
      *
      * @param $project object projekt ke vložení
      * @return bool true - uložení se podařilo
-     *              false - uložení se selhalo
+     *              false - uložení selhalo
      */
     public function saveProject($project, $dateFormat = 'd.m.Y')
     {
@@ -76,23 +76,26 @@ class ProjectManager extends BaseManager
             {
                 return TRUE;
             }
+
+            return FALSE;
         }
         else
         {
-            if ($this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $project[self::COLUMN_ID])->update($project))
+            if (($this->database->table(self::TABLE_NAME)->where(self::COLUMN_ID, $project[self::COLUMN_ID])->update($project)) >= 0)
             {
                 return TRUE;
             }
-        }
 
-        return FALSE;
+            return FALSE;
+        }
     }
 
     /**
      * Odstranění projektu z databáze.
      *
      * @param $projectId int id projektu
-     * @return bool
+     * @return bool true - smazání se podařilo
+     *              false - smazání selhalo
      */
     public function removeProject($projectId)
     {
